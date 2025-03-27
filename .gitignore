@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+env/
+
+# Flask specific
+instance/
+*.sqlite
+*.db
+
+# Environment variables
+.env
+
+# VSCode
+.vscode/
+
+# Docker files (если не хотите их отслеживать)
+Dockerfile
+docker-compose.yml
