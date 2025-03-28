@@ -1,34 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Plagiarism Checker{% endblock %}
-
+{% block title %}Проверка текста{% endblock %}
 {% block content %}
-<div class="container d-flex justify-content-center mt-5">
-    <div class="card p-5 shadow-lg text-center" style="max-width: 720px; width: 100%; border-radius: 16px;">
+<h1>Проверка текста</h1>
+<form method="POST">
+  <label>Введите текст:</label><br>
+  <textarea name="text" rows="5" cols="50"></textarea><br><br>
+  <button type="submit">Проверить</button>
+</form>
 
-        <!-- Красивый заголовок -->
-        <h1 class="mb-3" style="font-family: 'Arial', sans-serif; font-size: 42px; font-weight: bold;">
-            <span style="color: red;">B</span>
-            <span style="color: orange;">o</span>
-            <span style="color: blue;">t</span>
-            <span style="color: green;">n</span>
-            <span style="color: purple;">e</span>
-            <span style="color: brown;">t</span>
-        </h1>
-
-        <h3 class="mb-4 fw-semibold">Plagiarism Checker</h3>
-
-        <form action="/check" method="POST">
-            <!-- Увеличенное поле ввода -->
-            <div class="mb-4">
-                <textarea class="form-control fs-5 p-3" name="text" rows="6" placeholder="Enter text here..." required></textarea>
-            </div>
-
-            <!-- Крупная кнопка -->
-            <button type="submit" class="btn btn-primary w-100" style="font-size: 20px; padding: 12px;">
-                <i class="bi bi-search"></i> Check Plagiarism
-            </button>
-        </form>
-
-    </div>
-</div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <p style="color:red;">{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 {% endblock %}

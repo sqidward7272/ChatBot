@@ -1,8 +1,5 @@
 from flask_login import UserMixin
-from app import db
-from flask_bcrypt import Bcrypt
-
-bcrypt = Bcrypt()
+from app import db, bcrypt
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -15,3 +12,10 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
+
+class PlagiarismCheck(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    plagiarism_score = db.Column(db.Float, nullable=False)
+    checked_at = db.Column(db.DateTime, default=db.func.current_timestamp())

@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Личный кабинет</title>
-</head>
-<body>
-  <h1>Добро пожаловать, {{ user.username }}!</h1>
-  <a href="{{ url_for('main.logout') }}">Выйти</a>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Личный кабинет{% endblock %}
+{% block content %}
+<h1>Добро пожаловать, {{ user.username }}!</h1>
+<p>Ваш email: {{ user.email }}</p>
+{% endblock %}
