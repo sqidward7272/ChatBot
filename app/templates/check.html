@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Проверка{% endblock %}
+{% block content %}
+<h2>Проверка текста на уникальность</h2>
+
+<form method="post">
+  <div class="mb-3">
+    <label for="text" class="form-label">Введите текст:</label>
+    <textarea name="text" class="form-control" rows="6" required>{{ request.form.text }}</textarea>
+  </div>
+  <button type="submit" class="btn btn-warning">Проверить</button>
+</form>
+
+{% if result %}
+  <hr>
+  <h4>Результат:</h4>
+  <p class="text-success">Процент уникальности: <strong>{{ result }}%</strong></p>
+{% endif %}
+{% endblock %}

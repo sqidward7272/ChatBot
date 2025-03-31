@@ -1,9 +1,36 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: chatbot_db
+    volumes:
+      - ./db.changelog:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   web:
     build: .
     ports:
       - "5000:5000"
-    env_file:
-      - .env
+    environment:
+      - DATABASE_URL=postgresql://admin:root@db/chatbot_db
+      - SECRET_KEY=mysecret
+    depends_on:
+      db:
+        condition: service_healthy
+
+  tests:
+    build: .
+    depends_on:
+      web:
+        condition: service_started
+    command: pytest tests/
