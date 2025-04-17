@@ -1,3 +1,4 @@
+import requests
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
@@ -19,7 +20,7 @@ def register():
     if request.method == 'POST':
         email = request.form['email'].strip().lower()
         password = request.form['password']
-        
+
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             flash("Пользователь с таким email уже существует!")
@@ -64,6 +65,40 @@ def check():
         if not text:
             flash("Введите текст для проверки!")
         else:
-            result = 100
-            flash("Проверка завершена!")
+            try:
+                url = "https://ai-content-detector-ai-gpt.p.rapidapi.com/api/detectText/"
+                headers = {
+                    "Content-Type": "application/json",
+                    "X-RapidAPI-Key": "ba5432c13fmsh68f6bf1d65e30f1p11d6fejsn90b9e8518056",
+                    "X-RapidAPI-Host": "ai-content-detector-ai-gpt.p.rapidapi.com"
+                }
+                payload = {"text": text}
+
+                response = requests.post(url, json=payload, headers=headers)
+
+                print("DEBUG STATUS:", response.status_code)
+                print("DEBUG BODY:", response.text)
+
+                if response.status_code != 200:
+                    result = f"❌ Ошибка: API вернул код {response.status_code}."
+                else:
+                    data = response.json()
+                    status = data.get("status", False)
+                    fake_percentage = data.get("fakePercentage", 0)
+                    is_human = data.get("isHuman", 0)
+
+                    if not status:
+                        result = "❌ Ошибка: API не вернул успешный ответ."
+                    elif fake_percentage == 0 and is_human == 0:
+                        result = "⚠️ Невозможно определить. Попробуйте длиннее текст."
+                    else:
+                        label = "🤖 AI" if is_human == 0 else "🧑 Человек"
+                        result = f"{label} — AI вероятность: {fake_percentage:.1f}%"
+
+                    flash("Проверка завершена!")
+
+            except Exception as e:
+                result = f"Ошибка при проверке: {str(e)}"
+                flash("Произошла ошибка при обращении к AI Content Detector.")
+
     return render_template("check.html", result=result)
